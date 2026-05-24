@@ -18,7 +18,12 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
+                .authorizeHttpRequests(
+                        request -> request
+//                                .anyRequest().permitAll()
+//                                .anyRequest().hasAuthority("write")
+//                                .anyRequest().hasAnyAuthority("read, write")
+                                .anyRequest().hasRole("Admin"))
                 .build();
     }
 
@@ -28,12 +33,16 @@ public class SecurityConfig {
 
         UserDetails userDetailsObj1 = User.withUsername("code")
                 .password("decode")
-                .authorities("read")
+//                .authorities("read")
+//                .roles("Admin")
+                .authorities("ROLE_Manager")
                 .build();
 
         UserDetails userDetailsObj2 = User.withUsername("code1")
                 .password("decode1")
-                .authorities("write")
+//                .authorities("write")
+//                .roles("Manager")
+                .authorities("ROLE_Admin")
                 .build();
         inMemoryUserDetailsManager.createUser(userDetailsObj1);
         inMemoryUserDetailsManager.createUser(userDetailsObj2);
