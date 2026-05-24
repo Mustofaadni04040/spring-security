@@ -11,19 +11,25 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
     SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
+
+        String expression = "isAuthenticated() and hasAuthority('read')";
+
         return httpSecurity.httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         request -> request
 //                                .anyRequest().permitAll()
 //                                .anyRequest().hasAuthority("write")
 //                                .anyRequest().hasAnyAuthority("read, write")
-                                .anyRequest().hasRole("Admin"))
+//                                .anyRequest().hasRole("Admin")
+                                .anyRequest().access(new WebExpressionAuthorizationManager(expression))
+                )
                 .build();
     }
 
