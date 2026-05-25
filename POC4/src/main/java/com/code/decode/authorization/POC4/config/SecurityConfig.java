@@ -1,5 +1,6 @@
 package com.code.decode.authorization.POC4.config;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,15 +24,21 @@ public class SecurityConfig {
     SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
         String expression = "isAuthenticated() and hasAuthority('read')";
+//        dispatcher mather
+          return httpSecurity.authorizeHttpRequests(auth -> auth
+                  .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                  .requestMatchers("/secure/**").authenticated()
+                  .anyRequest().permitAll()
+          ).formLogin(Customizer.withDefaults()).build();
 
 //        regex mathcer
-         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new RegexRequestMatcher("/api/v[0-9]+", null))
-                        .hasRole("USER")
-                        .anyRequest().authenticated()
-                ).build();
+//         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+//                .httpBasic(Customizer.withDefaults())
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(new RegexRequestMatcher("/api/v[0-9]+", null))
+//                        .hasRole("USER")
+//                        .anyRequest().authenticated()
+//                ).build();
 
 //        request matcher
 //        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
