@@ -27,4 +27,15 @@ public class SecurityController {
 
         return "Access granted to user: " + id;
     }
+
+    @PreAuthorize("""
+        hasRole("Admin")
+        and #id == authentication.principal.username
+    """)
+    @GetMapping("testMultiLine/{id}")
+    public String testGetV1DemoEndpoint2(@PathVariable String id) {
+        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(a -> System.out.println(a));
+
+        return "Access granted to user: " + id;
+    }
 }
