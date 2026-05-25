@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -23,14 +24,24 @@ public class SecurityConfig {
 
         String expression = "isAuthenticated() and hasAuthority('read')";
 
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+//        regex mathcer
+         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/status/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/testMe/**").hasRole("Admin")
-                        .requestMatchers(HttpMethod.POST, "/testMe").hasRole("Manager")
+                        .requestMatchers(new RegexRequestMatcher("/api/v[0-9]+", null))
+                        .hasRole("USER")
                         .anyRequest().authenticated()
                 ).build();
+
+//        request matcher
+//        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+//                .httpBasic(Customizer.withDefaults())
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/status/**").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/testMe/**").hasRole("Admin")
+//                        .requestMatchers(HttpMethod.POST, "/testMe/**").hasRole("Manager")
+//                        .anyRequest().authenticated()
+//                ).build();
 
 //        return httpSecurity.httpBasic(Customizer.withDefaults())
 //                .authorizeHttpRequests(
