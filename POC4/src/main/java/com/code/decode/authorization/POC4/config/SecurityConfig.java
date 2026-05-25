@@ -2,8 +2,10 @@ package com.code.decode.authorization.POC4.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,16 +23,25 @@ public class SecurityConfig {
 
         String expression = "isAuthenticated() and hasAuthority('read')";
 
-        return httpSecurity.httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests(
-                        request -> request
-//                                .anyRequest().permitAll()
-//                                .anyRequest().hasAuthority("write")
-//                                .anyRequest().hasAnyAuthority("read, write")
-//                                .anyRequest().hasRole("Admin")
-                                .anyRequest().access(new WebExpressionAuthorizationManager(expression))
-                )
-                .build();
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/status/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/testMe/**").hasRole("Admin")
+                        .requestMatchers(HttpMethod.POST, "/testMe").hasRole("Manager")
+                        .anyRequest().authenticated()
+                ).build();
+
+//        return httpSecurity.httpBasic(Customizer.withDefaults())
+//                .authorizeHttpRequests(
+//                        request -> request
+////                                .anyRequest().permitAll()
+////                                .anyRequest().hasAuthority("write")
+////                                .anyRequest().hasAnyAuthority("read, write")
+////                                .anyRequest().hasRole("Admin")
+//                                .anyRequest().access(new WebExpressionAuthorizationManager(expression))
+//                )
+//                .build();
     }
 
     @Bean

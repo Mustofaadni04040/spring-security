@@ -6,7 +6,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SecurityController {
     @GetMapping("/testMe")
-    public String baseHandler() {
-        return "code decode";
+    public String getTest() {
+        return "code test";
+    }
+
+    @GetMapping("/status")
+    public String getStatus() {
+        return "code status";
     }
 }
