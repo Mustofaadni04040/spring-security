@@ -2,10 +2,14 @@ package com.code.decode.authorization.POC4.controller;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class SecurityController {
@@ -56,5 +60,14 @@ public class SecurityController {
     public String testGetV1DemoEndpoint4(@PathVariable String id) {
 
         return "Access granted";
+    }
+
+    @GetMapping("testPreFilter")
+    @PreFilter("""
+        hasRole("Admin")
+        and filterObject.contains('hack')
+    """)
+    public List<String> testPreFilter(@RequestBody List<String> listToBDeletedAndFiltered) {
+        return listToBDeletedAndFiltered;
     }
 }
