@@ -38,4 +38,12 @@ public class SecurityController {
 
         return "Access granted to user: " + id;
     }
+
+    @PreAuthorize("@customSecurityRules.userAccessDecider(#id, authentication)")
+    @GetMapping("testMultiLineWithCustomBean/{id}")
+    public String testGetV1DemoEndpoint3(@PathVariable String id) {
+        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(a -> System.out.println(a));
+
+        return "Access granted to user: " + id;
+    }
 }
