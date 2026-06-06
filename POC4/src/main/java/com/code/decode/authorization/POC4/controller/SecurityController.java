@@ -1,5 +1,6 @@
 package com.code.decode.authorization.POC4.controller;
 
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,5 +46,15 @@ public class SecurityController {
         SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().forEach(a -> System.out.println(a));
 
         return "Access granted to user: " + id;
+    }
+
+    @PostAuthorize("""
+        returnObject == "Access granted"
+        and #id == authentication.name
+    """)
+    @GetMapping("testMultiLineWithCustomBean/{id}")
+    public String testGetV1DemoEndpoint4(@PathVariable String id) {
+
+        return "Access granted";
     }
 }
