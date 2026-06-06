@@ -70,4 +70,13 @@ public class SecurityController {
     public List<String> testPreFilter(@RequestBody List<String> listToBDeletedAndFiltered) {
         return listToBDeletedAndFiltered;
     }
+
+    @GetMapping("testPostFilter")
+    @PreFilter("""
+        hasRole("Admin")
+        and !filterObject.contains('password')
+    """)
+    public List<String> testPostFilter() {
+        return List.of("password", "code", "decode", "password_new");
+    }
 }
